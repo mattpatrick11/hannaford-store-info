@@ -67,6 +67,48 @@
       padding: 0 16px;
     }
 
+    .requirements-card {
+      background: #fff8e1;
+      border: 1.5px solid #f6c90e;
+      border-radius: 12px;
+      padding: 22px 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .requirements-card h2 {
+      font-size: 1.05rem;
+      color: #2d3748;
+      margin-bottom: 14px;
+    }
+
+    .requirements-card ul {
+      list-style: none;
+      padding: 0;
+      display: inline-block;
+      text-align: left;
+    }
+
+    .requirements-card ul li {
+      padding: 6px 0 6px 28px;
+      position: relative;
+      font-size: 0.95rem;
+      color: #2d3748;
+      line-height: 1.4;
+    }
+
+    .requirements-card ul li::before {
+      content: "✅";
+      position: absolute;
+      left: 0;
+    }
+
+    .requirements-card a {
+      color: #1a3a5c;
+      font-weight: 600;
+    }
+
     .search-card {
       background: white;
       border-radius: 12px;
@@ -198,6 +240,16 @@
 </div>
 
 <main>
+  <div class="requirements-card">
+    <h2>📋 Driver Requirements</h2>
+    <ul>
+      <li>All stops require <strong>IN/OUT times</strong> to be notated on the trip sheet.</li>
+      <li>All stops require <strong>Signatures</strong>.</li>
+      <li>All stops require <strong>temperature</strong> to be notated if a temperature controlled load.</li>
+      <li>Completed trip sheets are to be <strong>scanned and emailed</strong> to <a href="mailto:Hannaford@gmhtrans.com">Hannaford@gmhtrans.com</a> before turning in to dispatch.</li>
+    </ul>
+  </div>
+
   <div class="search-card">
     <h2>🔍 Look Up a Store</h2>
     <div class="search-row">
