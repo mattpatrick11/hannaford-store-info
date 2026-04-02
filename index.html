@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hannaford Driver Portal</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a3a5c;
+      color: white;
+      padding: 20px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    .dispatch-bar {
+      background: #2d6a9f;
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+      font-size: 0.88rem;
+    }
+
+    .dispatch-bar .label {
+      opacity: 0.8;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .dispatch-bar .value {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .dispatch-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+
+    .search-card {
+      background: white;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+
+    .search-card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: #2d3748;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    #storeInput {
+      flex: 1;
+      padding: 14px 18px;
+      font-size: 1.1rem;
+      border: 2px solid #cbd5e0;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #storeInput:focus {
+      border-color: #2d6a9f;
+    }
+
+    #searchBtn {
+      background: #1a3a5c;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    #searchBtn:hover {
+      background: #2d6a9f;
+    }
+
+    #errorMsg {
+      margin-top: 10px;
+      color: #c53030;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .result-card {
+      background: white;
+      border-radius: 12px;
+      padding: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+      display: none;
+    }
+
+    .result-header {
+      background: #1a3a5c;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .result-header h3 {
+      font-size: 1.1rem;
+    }
+
+    .open-btn {
+      background: white;
+      color: #1a3a5c;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .open-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .doc-frame {
+      width: 100%;
+      height: 75vh;
+      border: none;
+      display: block;
+    }
+
+    footer {
+      text-align: center;
+      color: #a0aec0;
+      font-size: 0.78rem;
+      padding: 24px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🚛 Hannaford Driver Portal</h1>
+  <p>Schodack Landing, NY — Store Information Lookup</p>
+</header>
+
+<div class="dispatch-bar">
+  <div class="dispatch-item">
+    <span class="label">Location</span>
+    <span class="value">970 US RTE 9 — Schodack Landing, NY 12156</span>
+  </div>
+  <div class="dispatch-item">
+    <span class="label">Dispatch Phone</span>
+    <span class="value">518-766-2912 &nbsp;·&nbsp; EXT 6755</span>
+  </div>
+</div>
+
+<main>
+  <div class="search-card">
+    <h2>🔍 Look Up a Store</h2>
+    <div class="search-row">
+      <input
+        type="number"
+        id="storeInput"
+        placeholder="Enter store # (e.g. 8010)"
+        min="8000"
+        max="9999"
+        autofocus
+      />
+      <button id="searchBtn" onclick="lookupStore()">View Store</button>
+    </div>
+    <p id="errorMsg">⚠️ Store # not found. Please check the number and try again.</p>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <h3 id="resultTitle">Store Details</h3>
+      <a id="openLink" class="open-btn" href="#" target="_blank">↗ Open Full Screen</a>
+    </div>
+    <iframe id="docFrame" class="doc-frame" src="" title="Store Document"></iframe>
+  </div>
+</main>
+
+<footer>Hannaford Driver Portal &mdash; For driver use only</footer>
+
+<script>
+  // Store # → Google Drive file ID mapping
+  const stores = {
+    "8003": "1QxVmrBkFGbQ8684q3ErDn9xf1I0-og29",
+    "8004": "1hm7La62n85epUuCRLDBRfySC_GvQYfmP",
+    "8005": "1cuFXYdj0rZaN1XgPSnIGIVaqvCI8I0YW",
+    "8007": "1PExvaUrHiX9M4HvIKw2jjMqhIsy2JWhm",
+    "8008": "1mNfSf8ylr79rgiqcCa_FfI6l0KL_zQMR",
+    "8009": "1skKkt0fff988oFTmAFPzVhe3Sda9O-Gy",
+    "8010": "1BqI6l5iF8SpmUK-Rgnp94oXk8cV-Lmsw",
+    "8011": "1qCGKHsNyYgko-DqF1EN4s9IiRtZP8kO7",
+    "8012": "1x3ke1C4R5919kF1v2qO6oSJgPBMMCWhI",
+    "8013": "1x2kV-X0HB4PttLET_Xv4JOwYQjH9erla",
+    "8014": "11W6XPZT5LF1iqX9ixAmZwbkt7f2PMsgd",
+    "8015": "1rhKfVTdxzweqkHfdCDxAY2HfZ28oZLvC",
+    "8016": "1r5jHUmJCGlOX-KFQ6x4K4ym0mg12KMCq",
+    "8017": "1XKblUI1UiiGL7MW6OyegN7AgY8S-eHAy",
+    "8018": "1Iyy-rcpnz6PK5mt6QEwSidB9f3U5b2Yp",
+    "8019": "1Rxdb5AaIZ1qT7kwNENX4VAC0NC7ndOM6",
+    "8020": "1Wf1c7yajJVDAbDLL68syV3tU4-3idJC1",
+    "8021": "18qpyRaTE6CU_DL9tzhMER0HWCf6JcjHk",
+    "8022": "1Y7zyuuhm3FlPXgDRtv7tMzblWT221sng",
+    "8107": "1rQpG1OFM64252av8B8NBpGHGM70M9Zlb",
+    "8109": "1bMFX8yuo58jhfLD9EtJfmlWKnEZfzjZl",
+    "8110": "1TxZdVDMoNQ76RNvJJw4dZUw6rp27JbW7",
+    "8111": "1c71kuu9fN3nD3GxssINN6J7Ngy14zDfE",
+    "8113": "16MMvbAGaoR8uDTJw6Cvesg-wDp-MN5A0",
+    "8114": "1WiKOvcjOFaXS2jIyt2oDTRSUgWph-OMm",
+    "8118": "14HTBSyYP9VwVKgLfau2731_R5xEcQfnV",
+    "8119": "162mupoJBY0x95NzZXWRWgZRUOCGpHfe1",
+    "8120": "1Pp_IJRDsjYIP4hNqUh0VVeOmCF0WccMn",
+    "8121": "1WXuo90apSEROcjl1Q8NgXWJLTFmXGQVF",
+    "8123": "1iTsleBo4kctthl7qA7w0yYwjqESfbkEH",
+    "8124": "1VVFZvg43PUt6dxpYi7MZSbC6R9tbTY_8",
+    "8125": "1w1FdzbbD9jqhTgkZIu21dJZix8e-QjAA",
+    "8126": "1mmvaVl3wGxmI0NTRcrm8R86x-5k6MSHJ",
+    "8128": "196AEKNV6qil3N4_BYm0CVjcBzusNoOvx",
+    "8129": "1JozzaBPit-JCvtYiEUlBVpiUR0gQ330K",
+    "8131": "1oLPlkG650dsbMeCe8KO1eq1VhFBUOaap",
+    "8133": "1lJqzFMZIlcu_RjzkoexFASic5VmUfUtH",
+    "8137": "1hHm79jitLJ07lP_6jh3obtXao6V92lYy",
+    "8138": "1e6rszS94NOWMIJIEPi-7MQDli1YKECt7",
+    "8139": "1IOWHIqmHdekv-Af7tzlBRJFRZ4Y_cvEX",
+    "8140": "1bti1-pJjsfmgZhZPDVWShn_n7dRdopen",
+    "8141": "1MiZ6of5J4luXms4H65y-jD5HBk-Agp22",
+    "8143": "1DLMp7-tCI1UyWedvHLgQo71CYm3XKjmq",
+    "8146": "1FEl0uB_Y7TWr76VcR1xzpOxDPFJhfQuJ",
+    "8149": "16oqvKcZ7URuGqutFYuov6Z6osidgcfAp",
+    "8151": "1EaJXet2vv3FkWpQQgCCHY6DkkS_4bNpt",
+    "8152": "1sNlyDW4JrQechwLoIBDJ0g1KJ0-uiSwF",
+    "8153": "1hd0Bf4S7OhexoqJhlvdqFTUY8aicjTWX",
+    "8155": "1ABusiPe3LI3Rlr66D9a2vykrwGnIzS-n",
+    "8156": "1eAobtQIhhvW8qrnXl4LK7oZDM1X2sHHU",
+    "8159": "1DjvW5X3gSFGBW12C69mYQvAz4j2f9pT9",
+    "8160": "1Bg0mKzMinwXm0ROGcVLVVihWdDbEGkP2",
+    "8161": "1msYxMv48DLsZEkpKyPvn6wvgq3Y3SPn5",
+    "8162": "1U1ucWKr_hg18omWvDbWw7jKHrCSEiLuK",
+    "8163": "1En1k69gTO59XuvVTVVxgS48TyYJP7yUT",
+    "8164": "1LTJVt8UT55ijJJHPMHcmeK8ZM1WdGNWr",
+    "8165": "1BvMNTuYEJj86F1E7BgLY9cjJmzVHDwa-",
+    "8166": "1CEPNT5wk-OcufxLrC0CTn11CkvPd3K-L",
+    "8167": "1HohEQYrZB1WDbXkiH0RxoJKjkPLeWhJR",
+    "8168": "1p6s4ls0QJ43v_u35_lgMUkdd0ZDrB3AS",
+    "8169": "1LbQSz3Qul_9j5alTX_8ckkrz83-hiEgh",
+    "8170": "1QaZc61CLNAtuLnTNz5CKdmc2bBgWeDh_",
+    "8171": "1zUkP9jk4-ikcoPKfbjQv9kKwszs8sjD-",
+    "8173": "1Euj162k7yjFLQ9IDuBG_3_ViviZMoi0j",
+    "8175": "1pHLx6lJCcmm8rzdYoRuzejRGBAxBhI2p",
+    "8177": "1LmBZGoszVWSCrzghszD-3DLn3HyEikAI",
+    "8178": "1_GJGyKEhhWUGd91aM-MHaaRsPO5pXsfq",
+    "8180": "19MySSYoBMMxno9Zy4PqMom_6OIvbuftu",
+    "8181": "1f6N_ot4-1lRfOCLGgmLAdMhoqwvPjpUu",
+    "8183": "1wmvouh69xTIpuhahqddrkpfX4zSBNk6e",
+    "8185": "1JivaLZExyN8_NLXsabTmNs3cBhNOW3tU",
+    "8186": "17MF6fJ4yHbF93B4PVq-Syc-xIrlDLg57",
+    "8187": "15zgkaL8g0KSVzbTrQq7EBD5ijPSRXrCF",
+    "8188": "1unvaz9p8T_o33Q3RMHgURclxN6huyZ1c",
+    "8190": "1SIts9ZwIqSEpwjM83beBe5EnunVkNox7",
+    "8191": "16XLVqdl3aaOuiDw1LkAorIY691zGRXdw",
+    "8192": "1fPh6Y5sCvpTY5NgvVUAjuv8XFUFp2i5-",
+    "8208": "1GmQdPJh7M4TVcX2MWmfnPbw8IfABsFKs",
+    "8209": "1WVwBCK9-_QArUW24wC9FKO6UbvKby8_B",
+    "8211": "1NuBPc9lQhtbmPGiyNP_-0GULkAytr3UC",
+    "8212": "1NuqE4kJ6POF-6V98ljgGkFd6vywmwTJP",
+    "8213": "1sxMdB7EkhaDP7smIcKpv4HVKVKbT8Pux",
+    "8214": "1Sqs_GfYGJdDLD3tH-itfhrXR37-gNTs4",
+    "8217": "1Loi5nzxWhW_5p-OmgCxKsUB9eRIcNf4K",
+    "8220": "1jtcw8B9P0Lcmi7Ml9uuLMod0xufy09dh",
+    "8221": "12A-6hwphhLZx98KIL-u4KwTX9xGHGsFb",
+    "8222": "1Ss50M2viyJm9QgQE76pAxfojPXplovsp",
+    "8223": "1sRQ90W0Fm5DWuOlCHJBsTd3y7wnZEdgV",
+    "8224": "1kAq51A7i9Kv1OEKXU7HzN6Y8NvhZDogb",
+    "8225": "1dC_CB_XgR1Tl8fM6CvV5qVsuFwZA5WGg",
+    "8226": "14VUWsTJ9KS8RT4OZi6zoEc6y2cJ5m3Jj",
+    "8229": "19QBkLUacmsVIPwKSn3vL1YjVl274WAZz",
+    "8230": "1pGUfBNWyg8Ac6JMc4D8gMmWFPBg1-MTe",
+    "8231": "1B2FbFEnutQv1Ye1H8IrLWKxrYSDYKnBc",
+    "8233": "1ON6PT6mSLgZ4AbAOsaTD4G-ERxp0hRLK",
+    "8236": "1kBoNLQX7LMnF7xgwcu9BcudFW_uzotZY",
+    "8238": "1YPEiosIUUk8CKUr3Uv7-FlbUlEKooOVC",
+    "8239": "1cD0O2HsOGOvC8oG7D1vzRGq-BGrTZVQ9",
+    "8241": "1JqRQvwZsfhBwOtk-ynmwbaArcIm4xj6R",
+    "8242": "1qDpPmu3Qj1IqAeLXy9YifD12EMvBrmYG"
+  };
+
+  // Allow Enter key to trigger search
+  document.getElementById('storeInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') lookupStore();
+  });
+
+  function lookupStore() {
+    const input = document.getElementById('storeInput').value.trim();
+    const errorMsg = document.getElementById('errorMsg');
+    const resultCard = document.getElementById('resultCard');
+    const docFrame = document.getElementById('docFrame');
+    const resultTitle = document.getElementById('resultTitle');
+    const openLink = document.getElementById('openLink');
+
+    errorMsg.style.display = 'none';
+
+    if (!input) return;
+
+    const fileId = stores[input];
+    if (!fileId) {
+      errorMsg.style.display = 'block';
+      resultCard.style.display = 'none';
+      return;
+    }
+
+    // Use Google Drive viewer to render the .doc inline
+    const viewerUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+    const fullUrl = `https://drive.google.com/file/d/${fileId}/view`;
+
+    resultTitle.textContent = `Store #${input} — Details`;
+    openLink.href = fullUrl;
+    docFrame.src = viewerUrl;
+    resultCard.style.display = 'block';
+
+    // Smooth scroll to result
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+
+</body>
+</html>
